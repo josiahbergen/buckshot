@@ -8,7 +8,6 @@ if __name__ == "__main__":
     print("     and Josiah Bergen    ")
     print("===========================")
 
-    input("\nPress Enter to begin.")
-
-    game = GameState()
+    debug = input("\nPress Enter to begin. ")
+    game = GameState(debug=True if debug == "d" else False)
     game.new_game()

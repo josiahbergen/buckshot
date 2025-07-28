@@ -13,7 +13,8 @@ class Player:
         self.name = "PLAYER" if role == Player.Role.PLAYER else "DEALER"
         self.opponent = None
         self.lives = 3
-        self.skip_next_turn = False
+        self.handcuffed = False
+        self.shot_self_with_blank = False
 
 
 class Shotgun:

@@ -1,5 +1,5 @@
-from src.entities import *
-from src.items import *
+from src.entities import Player, Shotgun
+from src.items import Item
 
 class GameState:
 

@@ -1,7 +1,7 @@
-from src.state import *
-from time import sleep
+from src.state import GameState
 
 if __name__ == "__main__":
+
     print("===========================")
     print("     BUCKSHOT ROULETTE    ")
     print("  Created by Andrew Mrak  ")

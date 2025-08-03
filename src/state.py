@@ -1,6 +1,6 @@
 from src.entities import Player, Shotgun
-from src.items import Item
 import os
+
 
 class GameState:
 
@@ -46,10 +46,11 @@ class GameState:
                 self.print(f"Shotgun: {self.shotgun.get_shell_display()}")
                 self.turn = self.player
 
-            self.print(f"{self.turn.name}'s turn. Lives: {self.dealer.lives} - {self.player.lives}")
+            self.print(f"{self.turn.name}'s turn. "
+                       "Lives: {self.dealer.lives} - {self.player.lives}")
             self.play_turn()
             self.next_turn()
-        
+
         winner = self.player if self.player.lives > 0 else self.dealer
         self.print(f"Round {round} ended. Winner: {winner.name}")
         return winner
@@ -57,7 +58,11 @@ class GameState:
     def play_turn(self):
         self.dprint(f"Current shell: [ {self.shotgun.shells[0]} ]")
         while True:
-            move = self.get_valid_input("What would you like to do? (i)tem, (s)hotgun: ", ["i", "s"])
+            move = self.get_valid_input(
+                "What would you like to do? (i)tem, (s)hotgun: ",
+                ["i", "s"]
+                )
+
             if move == "i":
                 self.use_item()
             elif move == "s":
@@ -65,26 +70,40 @@ class GameState:
                 break
 
     def use_item(self):
-        item = self.get_valid_input("What item would you like to use? (b)eer, (c)igarettes, (h)andcuffs, hand(s)aw, (m)agnifying glass: ", ["b", "c", "h", "s", "m"])
+        item = self.get_valid_input(
+            "What item would you like to use? (b)eer, (c)igarettes, "
+            "(h)andcuffs, hand(s)aw, (m)agnifying glass: ",
+            ["b", "c", "h", "s", "m"]
+            )
         match item:
             case "b":
                 self.shotgun.rack()
                 self.print("The shotgun has been racked.")
             case "c":
-                self.turn.lives = min(self.turn.lives + 1, Player.MAX_LIVES_MAP[self.round])
+                self.turn.lives = min(
+                    self.turn.lives + 1,
+                    Player.MAX_LIVES_MAP[self.round]
+                )
                 self.print("You have regained 1 life.")
                 self.print(f"Lives: {self.dealer.lives} - {self.player.lives}")
             case "h":
                 self.turn.opponent.handcuffed = True
-                self.print(f"{self.turn.opponent.name} will skip their next turn.")
+                self.print(f"{self.turn.opponent.name} will skip their turn.")
             case "s":
                 self.shotgun.damage = 2
                 self.print("The shotgun will deal 2 damage this turn.")
             case "m":
-                self.print(f"Checking the chamber: {self.shotgun.check_chamber()}")
+                self.print(
+                    f"Checking the chamber: {self.shotgun.check_chamber()}"
+                )
 
     def use_shotgun(self):
-        target = self.get_valid_input(f"Who would you like to shoot? (y)ourself, ({self.turn.opponent.name.lower()[:1]}){self.turn.opponent.name.lower()[1:]}: ", ["y", self.turn.opponent.name.lower()[:1]])
+        target = self.get_valid_input(
+            "Who would you like to shoot? "
+            f"(y)ourself, ({self.turn.opponent.name.lower()[:1]})"
+            f"{self.turn.opponent.name.lower()[1:]}: ",
+            ["y", self.turn.opponent.name.lower()[:1]]
+        )
         if target == "y":
             self.shoot(self.turn)
         elif target == self.turn.opponent.name.lower()[:1]:
@@ -93,12 +112,11 @@ class GameState:
     def shoot(self, target: Player):
 
         os.system('cls')
-        self.dprint(f"Shooting {target.name} with [ {self.shotgun.shells[0]} ]")
 
         if self.shotgun.shells[0] == 0:
             self.print("Blank.")
             self.shotgun.rack()
-            self.turn.shot_self_with_blank = True if target == self.turn else False
+            self.turn.shot_self_with_blank = target == self.turn
             return
 
         self.print(f"BANG! The {target.name} has been shot.")
@@ -110,13 +128,15 @@ class GameState:
     def next_turn(self):
 
         self.dprint(f"Getting next turn after: {self.turn.name}")
-        
+
         if self.turn.opponent.handcuffed:
             self.print(f"{self.turn.opponent.name}'s turn is being skipped.")
             self.turn.opponent.handcuffed = False
             return
         if self.turn.shot_self_with_blank:
-            self.dprint(f"{self.turn.name} shot themselves with a blank, exiting.")
+            self.dprint(
+                f"{self.turn.name} shot themselves with a blank, exiting."
+            )
             self.turn.shot_self_with_blank = False
             return
         self.turn = self.turn.opponent
@@ -129,7 +149,7 @@ class GameState:
                 return move
             else:
                 self.print("Please enter a valid option.")
-    
+
     def dprint(self, message: str):
         if self.debug:
             print(f"[ DEBUG ] {message}")
